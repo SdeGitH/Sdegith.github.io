@@ -1,3 +1,20 @@
 <body>
-    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/album/3Sz06QgI5dxeKNkoNqJjCi?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    <head>
+ ...
+ <meta name="apple-music-developer-token" content="DEVELOPER-TOKEN">
+ <meta name="apple-music-app-name" content="My Cool Web App">
+ <meta name="apple-music-app-build" content="1978.4.1">
+ ...
+</head>
+   <script src="https://js-cdn.music.apple.com/musickit/v1/musickit.js"></script>
+    <script>document.addEventListener('musickitloaded', function() {
+  // MusicKit global is now defined
+  MusicKit.configure({
+    developerToken: 'DEVELOPER-TOKEN',
+    app: {
+      name: 'My Cool Web App',
+      build: '1978.4.1'
+    }
+  });
+        });</script>
 </body>

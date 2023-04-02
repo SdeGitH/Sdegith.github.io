@@ -1,86 +1,64 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Extraire l'audio d'une vidéo YouTube</title>
-  </head>
-  <body>
-   <form id="youtube-video-id-form">
-  <label for="youtube-video-id">Enter YouTube Video ID:</label>
-  <input type="text" id="youtube-video-id" name="youtube-video-id" required>
-  <button type="submit">Play Video</button>
-</form>
-    <script>
-      function onYouTubeIframeAPIReady() {
-  var audioWrapper = document.getElementById("youtube-audio");
-  var videoIdInput = document.getElementById("youtube-video-id");
-  var playPauseIcon = document.createElement("img");
-  var youtubePlayer = document.createElement("div");
-  var isPlaying = false;
-  
-  playPauseIcon.setAttribute("id", "youtube-icon");
-  playPauseIcon.setAttribute("src", "https://i.imgur.com/quyUPXN.png");
-  playPauseIcon.style.cursor = "pointer";
-  playPauseIcon.style.cursor = "hand";
-  
-  audioWrapper.appendChild(playPauseIcon);
-  
-  youtubePlayer.setAttribute("id", "youtube-player");
-  audioWrapper.appendChild(youtubePlayer);
-  
-  function togglePlayPause() {
-    if (isPlaying) {
-      youtubePlayer.pauseVideo();
-      playPauseIcon.setAttribute("src", "https://i.imgur.com/quyUPXN.png");
-      isPlaying = false;
+<div style="display:flex;justify-content:center;align-items:center;">
+    <div style="width:400px;height:300px;">
+        <div data-video="I_2D8Eo15wE" data-autoplay="0" data-loop="1" id="youtube-audio"></div>
+        <div style="clear:both;margin:10px;text-align:center">
+           
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
+<script>
+
+  var player;
+  function onYouTubeIframeAPIReady() {
+
+    var ctrlq = document.getElementById("youtube-audio");
+    ctrlq.innerHTML = '<img id="youtube-icon" src=""/><div id="youtube-player"></div>';
+    ctrlq.style.cssText = 'width:150px;margin:2em auto;cursor:pointer;cursor:hand;display:none';
+    ctrlq.onclick = toggleAudio;
+
+    player = new YT.Player('youtube-player', {
+      height: '0',
+      width: '0',
+      videoId: ctrlq.dataset.video,
+      playerVars: {
+        autoplay: ctrlq.dataset.autoplay,
+        loop: ctrlq.dataset.loop,
+      },
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange 
+      } 
+    });
+  } 
+
+  function togglePlayButton(play) {    
+    document.getElementById("youtube-icon").src = play ? "https://i.imgur.com/IDzX9gL.png" : "https://i.imgur.com/quyUPXN.png";
+  }
+
+  function toggleAudio() {
+    if ( player.getPlayerState() == 1 || player.getPlayerState() == 3 ) {
+      player.pauseVideo(); 
+      togglePlayButton(false);
     } else {
-      youtubePlayer.playVideo();
-      playPauseIcon.setAttribute("src", "https://i.imgur.com/IDzX9gL.png");
-      isPlaying = true;
+      player.playVideo(); 
+      togglePlayButton(true);
+    } 
+  } 
+
+  function onPlayerReady(event) {
+    player.setPlaybackQuality("small");
+    document.getElementById("youtube-audio").style.display = "block";
+    togglePlayButton(player.getPlayerState() !== 5);
+  }
+
+  function onPlayerStateChange(event) {
+    if (event.data === 0) {
+      togglePlayButton(false); 
     }
   }
-  
-  playPauseIcon.addEventListener("click", togglePlayPause);
-  
-  var player = new YT.Player("youtube-player", {
-    height: "0",
-    width: "0",
-    playerVars: {
-      autoplay: 0,
-      modestbranding: 1,
-      rel: 0,
-      showinfo: 0,
-      controls: 0,
-      disablekb: 1,
-      iv_load_policy: 3,
-      playsinline: 1
-    },
-    events: {
-      onReady: function(event) {
-        player.loadVideoById(videoIdInput.value);
-      },
-      onStateChange: function(event) {
-        if (event.data === YT.PlayerState.ENDED) {
-          playPauseIcon.setAttribute("src", "https://i.imgur.com/quyUPXN.png");
-          isPlaying = false;
-        } else if (event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING) {
-          playPauseIcon.setAttribute("src", "https://i.imgur.com/IDzX9gL.png");
-          isPlaying = true;
-        } else {
-          playPauseIcon.setAttribute("src", "https://i.imgur.com/quyUPXN.png");
-          isPlaying = false;
-        }
-      }
-    }
-  });
-  
-  var form = document.getElementById("youtube-video-id-form");
-  
-  form.addEventListener("submit", function(event) {
-    event.preventDefault();
-    player.loadVideoById(videoIdInput.value);
-    togglePlayPause();
-  });
-}
-    </script>
-  </body>
-</html>
+
+</script>

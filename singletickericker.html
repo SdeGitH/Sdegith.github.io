@@ -1,20 +1,22 @@
-<body>
-    <head>
- ...
- <meta name="apple-music-developer-token" content="DEVELOPER-TOKEN">
- <meta name="apple-music-app-name" content="My Cool Web App">
- <meta name="apple-music-app-build" content="1978.4.1">
- ...
-</head>
-   <script src="https://js-cdn.music.apple.com/musickit/v1/musickit.js"></script>
-    <script>document.addEventListener('musickitloaded', function() {
-  // MusicKit global is now defined
-  MusicKit.configure({
-    developerToken: 'DEVELOPER-TOKEN',
-    app: {
-      name: 'My Cool Web App',
-      build: '1978.4.1'
-    }
-  });
-        });</script>
-</body>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Extraire l'audio d'une vidéo YouTube</title>
+  </head>
+  <body>
+    <h1>Extraire l'audio d'une vidéo YouTube</h1>
+    <label for="videoId">Identifiant de la vidéo :</label>
+    <input type="text" id="videoId" name="videoId"><br><br>
+    <button onclick="extractAudio()">Extraire l'audio et le lire</button>
+    <script src="https://cdn.jsdelivr.net/npm/youtube-audio-stream/dist/youtube-audio-stream.js"></script>
+    <script>
+      function extractAudio() {
+        var videoId = document.getElementById("videoId").value;
+        var videoUrl = "https://www.youtube.com/watch?v=" + videoId;
+        var audioPlayer = new Audio();
+        YouTubeAudioStream(audioPlayer, videoUrl);
+        audioPlayer.play();
+      }
+    </script>
+  </body>
+</html>

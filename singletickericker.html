@@ -4,19 +4,83 @@
     <title>Extraire l'audio d'une vidéo YouTube</title>
   </head>
   <body>
-    <h1>Extraire l'audio d'une vidéo YouTube</h1>
-    <label for="videoId">Identifiant de la vidéo :</label>
-    <input type="text" id="videoId" name="videoId"><br><br>
-    <button onclick="extractAudio()">Extraire l'audio et le lire</button>
-    <script src="https://cdn.jsdelivr.net/npm/youtube-audio-stream/dist/youtube-audio-stream.js"></script>
+   <form id="youtube-video-id-form">
+  <label for="youtube-video-id">Enter YouTube Video ID:</label>
+  <input type="text" id="youtube-video-id" name="youtube-video-id" required>
+  <button type="submit">Play Video</button>
+</form>
     <script>
-      function extractAudio() {
-        var videoId = document.getElementById("videoId").value;
-        var videoUrl = "https://www.youtube.com/watch?v=" + videoId;
-        var audioPlayer = new Audio();
-        YouTubeAudioStream(audioPlayer, videoUrl);
-        audioPlayer.play();
+      function onYouTubeIframeAPIReady() {
+  var audioWrapper = document.getElementById("youtube-audio");
+  var videoIdInput = document.getElementById("youtube-video-id");
+  var playPauseIcon = document.createElement("img");
+  var youtubePlayer = document.createElement("div");
+  var isPlaying = false;
+  
+  playPauseIcon.setAttribute("id", "youtube-icon");
+  playPauseIcon.setAttribute("src", "https://i.imgur.com/quyUPXN.png");
+  playPauseIcon.style.cursor = "pointer";
+  playPauseIcon.style.cursor = "hand";
+  
+  audioWrapper.appendChild(playPauseIcon);
+  
+  youtubePlayer.setAttribute("id", "youtube-player");
+  audioWrapper.appendChild(youtubePlayer);
+  
+  function togglePlayPause() {
+    if (isPlaying) {
+      youtubePlayer.pauseVideo();
+      playPauseIcon.setAttribute("src", "https://i.imgur.com/quyUPXN.png");
+      isPlaying = false;
+    } else {
+      youtubePlayer.playVideo();
+      playPauseIcon.setAttribute("src", "https://i.imgur.com/IDzX9gL.png");
+      isPlaying = true;
+    }
+  }
+  
+  playPauseIcon.addEventListener("click", togglePlayPause);
+  
+  var player = new YT.Player("youtube-player", {
+    height: "0",
+    width: "0",
+    playerVars: {
+      autoplay: 0,
+      modestbranding: 1,
+      rel: 0,
+      showinfo: 0,
+      controls: 0,
+      disablekb: 1,
+      iv_load_policy: 3,
+      playsinline: 1
+    },
+    events: {
+      onReady: function(event) {
+        player.loadVideoById(videoIdInput.value);
+      },
+      onStateChange: function(event) {
+        if (event.data === YT.PlayerState.ENDED) {
+          playPauseIcon.setAttribute("src", "https://i.imgur.com/quyUPXN.png");
+          isPlaying = false;
+        } else if (event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING) {
+          playPauseIcon.setAttribute("src", "https://i.imgur.com/IDzX9gL.png");
+          isPlaying = true;
+        } else {
+          playPauseIcon.setAttribute("src", "https://i.imgur.com/quyUPXN.png");
+          isPlaying = false;
+        }
       }
+    }
+  });
+  
+  var form = document.getElementById("youtube-video-id-form");
+  
+  form.addEventListener("submit", function(event) {
+    event.preventDefault();
+    player.loadVideoById(videoIdInput.value);
+    togglePlayPause();
+  });
+}
     </script>
   </body>
 </html>
